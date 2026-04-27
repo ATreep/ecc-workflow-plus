@@ -1,0 +1,9 @@
+2026.4.27 14:23:50 - v260427-1 - ATreep
+- Restructure skills from flat files to nested directories (skills/<name>/SKILL.md); update CLAUDE.md and README.md path references
+
+2026.4.27 14:11:51 - v260427 - ATreep
+- Convert repo to a Claude Code plugin: add .claude-plugin/{plugin.json,marketplace.json}
+- Migrate commands/*.md to skills/*.md with frontmatter for /one-workflow: namespace
+- Add CLAUDE.md (architecture + version-bump rules); refresh README install/skills sections
+- Bump version to v260427
+
