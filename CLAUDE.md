@@ -15,12 +15,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Versioning rule (critical)
 
-When invoking `project-version-workflow:update-commit`, update the `version` string to the latest `vYYMMDD` format (e.g. `v260427`) in **both**:
+All version strings in this repo follow the `vYYMMDD` format (e.g. `v260427`).
+
+When invoking `project-version-workflow:update-commit`, read the latest version produced by that skill and update the `version` field in **both** files to that exact value:
 
 - `.claude-plugin/plugin.json`
 - `.claude-plugin/marketplace.json` (the version inside the `plugins[0]` entry)
 
-The two files must stay in lockstep. 
+**The two files must always stay in lockstep.** Never update one without updating the other. 
 
 ## How the four skills relate (architectural big picture)
 

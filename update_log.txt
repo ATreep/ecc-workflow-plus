@@ -1,3 +1,6 @@
+2026.4.27 14:54:39 - v260427-2 - ATreep
+Clarify versioning rule in CLAUDE.md: state vYYMMDD is the canonical format, mandate reading version from update-commit skill output, and strengthen the lockstep requirement for plugin.json and marketplace.json.
+
 2026.4.27 14:23:50 - v260427-1 - ATreep
 - Restructure skills from flat files to nested directories (skills/<name>/SKILL.md); update CLAUDE.md and README.md path references
 
