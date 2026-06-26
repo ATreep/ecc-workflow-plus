@@ -169,19 +169,21 @@ After the writing-plan concludes, proceed to Step 5.
 
 **This step is mandatory — the user must make the SpecKit choice, not you.**
 
-Present the user with a clear choice about whether to use SpecKit:
+You MUST invoke the `AskUserQuestion` tool to present the SpecKit choice. Do NOT simply output text and wait for a follow-up prompt — use the tool so the user sees a structured, interactive choice.
 
-```
-Requirements are clarified and the implementation plan is generated. Would you like to use SpecKit for double confirmation and to generate an improved spec?
+Invoke `AskUserQuestion` with the following single question:
 
-- **Use SpecKit**: Will automatically execute speckit-specify → speckit-clarify → speckit-plan → speckit-tasks → speckit-implement (implemented with TDD and subagent-driven development)
-- **Skip SpecKit**: Will proceed directly with superpowers:subagent-driven-development for implementation (each subagent follows TDD discipline)
-```
+- **question**: "Requirements are clarified and the implementation plan is generated. Would you like to use SpecKit for double confirmation and to generate an improved spec?"
+- **header**: "SpecKit"
+- **multiSelect**: false
+- **options**:
+  1. **label**: "Use SpecKit", **description**: "Automatically execute speckit-specify → speckit-clarify → speckit-plan → speckit-tasks → speckit-implement (with TDD and subagent-driven development)"
+  2. **label**: "Skip SpecKit", **description**: "Proceed directly with superpowers:subagent-driven-development for implementation (each subagent follows TDD discipline)"
 
-Wait for the user's explicit choice, then proceed accordingly:
+After the user answers via the interactive dialog:
 
-- **If user chooses SpecKit** → proceed to Step 6a
-- **If user declines SpecKit** → proceed to Step 6b
+- **If user chose "Use SpecKit"** → proceed to Step 6a
+- **If user chose "Skip SpecKit"** → proceed to Step 6b
 
 **Do NOT make this choice on behalf of the user.** This is a human-in-the-loop decision. Even if the requirement is simple and SpecKit seems like "overkill," the user decides — not you.
 
@@ -211,12 +213,12 @@ Invoke the following 4 skills in strict sequence via the Skill tool. **This pipe
 
 **Auto-continuation (CRITICAL):** Once `speckit-specify` starts, the pipeline proceeds through clarify → plan → tasks without interruption. The user should NOT need to type "speckit-clarify", "speckit-plan", or "speckit-tasks" manually — this skill orchestrates the full chain automatically. **Never ask "should I continue to the next skill?" or wait for the user to confirm each step.**
 
-**Human-in-the-Loop Constraint (CRITICAL):** If any SpecKit skill asks a substantive question — such as a design decision, preference between alternatives, clarification of ambiguous requirements, or any question that requires human judgment — you MUST surface that question to the user and wait for their answer. Do NOT make assumptions, guess, or choose on the user's behalf. The auto-continuation applies to the pipeline orchestration, NOT to answering domain-level questions for the user.
+**Human-in-the-Loop Constraint (CRITICAL):** If any SpecKit skill asks a substantive question — such as a design decision, preference between alternatives, clarification of ambiguous requirements, or any question that requires human judgment — you MUST invoke the `AskUserQuestion` tool to present that question to the user. Do NOT simply output text and wait — use the tool so the user sees a structured, interactive choice. Do NOT make assumptions, guess, or choose on the user's behalf. The auto-continuation applies to the pipeline orchestration, NOT to answering domain-level questions for the user.
 
 To distinguish:
 - **Auto-continue through:** "Step complete. Moving to next phase..." (no user input needed)
-- **Pause and ask user:** "Which authentication method should we use: OAuth2 or JWT?" (requires human judgment)
-- **Pause and ask user:** "Should the API support batch operations or single-item only?" (design decision)
+- **Invoke AskUserQuestion:** "Which authentication method should we use: OAuth2 or JWT?" (requires human judgment — structure as a single-select question with one option per alternative)
+- **Invoke AskUserQuestion:** "Should the API support batch operations or single-item only?" (design decision — structure as a single-select question with labeled options and descriptions)
 
 **Important:** After `speckit-specify` completes, note the generated spec directory path (typically `specs/001-xxx/`). You will need it for the implementation step.
 
@@ -274,7 +276,8 @@ Invoke the following skills in sequence:
 | Calling SpecKit skills in parallel | They must run sequentially: specify → clarify → plan → tasks |
 | Pausing between SpecKit steps asking "shall I continue?" | Auto-continue through the pipeline; only pause when a skill asks a substantive question requiring human judgment |
 | Asking user to confirm each SpecKit skill invocation | NEVER ask "should I run speckit-clarify now?" or similar — the pipeline is fully automatic |
-| Answering SpecKit questions on behalf of the user | Surface all design decisions, preference trade-offs, and clarification questions to the user; never guess or assume |
+| Answering SpecKit questions on behalf of the user | Surface all design decisions, preference trade-offs, and clarification questions to the user via `AskUserQuestion`; never guess or assume |
+| Outputting text and waiting for a follow-up prompt instead of invoking `AskUserQuestion` | When the user's decision is required (Step 5 SpecKit choice, Step 6a.2 substantive questions), always use the `AskUserQuestion` tool — a structured interactive dialog, not a plain-text prompt |
 | Using a hardcoded spec path in Step 7a | Always use the actual directory path from `speckit-specify` output |
 | Proceeding after a skill fails | Stop and report which skill failed; do not continue the pipeline |
 | Forgetting to invoke TDD before subagent-development in Step 6b | Always invoke `superpowers:test-driven-development` before `superpowers:subagent-driven-development` |
